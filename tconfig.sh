@@ -36,6 +36,12 @@ main() {
 
     handle_install_arguments $@
 
+    display_message "Updating git submodules"
+    git submodule update --init
+
+    # fix_zsh_install
+    sed -i 's/env zsh//g' oh-my-zsh/tools/install.sh
+
     # Create all required file locations
     create_directory "${HOME}/.grc"
     create_directory "${HOME}/.config/terminator/"
@@ -65,7 +71,7 @@ main() {
         install_powerlevel9k_theme
         configure_powerlevel9k_theme
     else
-        configure_bira_theme
+        configure_fino_theme
     fi
 
     # STEP 4: Configure GRC
@@ -175,7 +181,8 @@ display_error() {
     display_bar $CRED
 }
 display_bar() {
-    echo -e "${1}----------------------------------------------------------------------------------------------------${CE}"
+    #echo -e "${1}----------------------------------------------------------------------------------------------------${CE}"
+    echo -e "${1}####################################################################################################${CE}"
 }
 ################################################################################
 install_apt_package() {
