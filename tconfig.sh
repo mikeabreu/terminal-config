@@ -92,6 +92,7 @@ main() {
     # STEP 9: Tell user to restart the terminal
     display_warning "Please open terminator."
     display_success "Terminal Configuration Finished"
+    env zsh
 }
 ################################################################################
 #   FUNCTIONS
