@@ -247,6 +247,7 @@ configure_grc() {
     safe_copy "${CWD}/configs/grc/conf.nmap" "${HOME}/.grc/conf.nmap"
     safe_copy "${CWD}/configs/grc/grc.conf" "/etc/grc.conf"
     safe_copy "${CWD}/configs/grc/grc.zsh" "/etc/grc.zsh"
+    safe_copy "${CWD}/configs/grc/conf.ls" "/usr/share/grc/conf.ls"
 }
 ################################################################################
 install_vundle() {
