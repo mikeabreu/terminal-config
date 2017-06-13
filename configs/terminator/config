@@ -1,0 +1,21 @@
+[global_config]
+  title_font = "SourceCodePro+Powerline+Awesome Regular, Bold 12"
+  title_transmit_bg_color = "#3465a4"
+  title_use_system_font = False
+[keybindings]
+[layouts]
+  [[default]]
+    [[[child1]]]
+      parent = window0
+      type = Terminal
+    [[[window0]]]
+      parent = ""
+      type = Window
+[plugins]
+[profiles]
+  [[default]]
+    background_darkness = 1.0
+    cursor_color = "#aaaaaa"
+    font = "SourceCodePro+Powerline+Awesome Regular, 14"
+    scrollback_infinite = True
+    use_system_font = False
