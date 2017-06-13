@@ -36,6 +36,9 @@ main() {
 
     handle_install_arguments $@
 
+    # Display information
+    display_warning "Terminal Configuration Started"
+
     display_success "Updating git submodules"
     git submodule update --init
 
@@ -49,9 +52,6 @@ main() {
         create_directory "${HOME}/.vim/bundle"
         create_directory "${HOME}/.vim/colors"
     fi
-
-    # Display information
-    display_success "Terminal Configuration Started"
 
     # STEP 1: Install ZSH, GRC, VIM and TERMINATOR
     apt-get update
