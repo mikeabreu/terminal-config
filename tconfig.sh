@@ -303,7 +303,7 @@ add_terminal_colors() {
     # Background: Common Color Names
     CB="\033[48;5;"
     CBRED="${CB}9m"
-    CBGREEN="${CB}28m"
+    CBGREEN="${CB}46m"
     CBBLUE="${CB}27m"
     CBORANGE="${CB}202m"
     CBYELLOW="${CB}226m"
