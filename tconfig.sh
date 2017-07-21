@@ -22,27 +22,22 @@
 #
 ################################################################################
 main() {
-    # Check if no arguments were passed.
-    if [[ $# -lt 1 ]]; then
-        display_help
-        exit 0
-    fi
+    clear
+    # Display confirmation
+    display_script_confirmation
 
     # Set variables
     CWD=$(dirname $0)
     font=true
     vim=true
-    theme="fino"
-
-    handle_install_arguments $@
 
     # Display information
-    display_warning "Terminal Configuration Started"
+    display_theme_selection
 
     display_success "Updating git submodules"
     git submodule update --init
 
-    # fix_zsh_install
+    # remove 'env zsh' line in install.sh script for oh-my-zsh
     sed -i 's/env zsh//g' oh-my-zsh/tools/install.sh
 
     # Create all required file locations
@@ -67,12 +62,22 @@ main() {
 
     # STEP 3: Configure Theme for ZSH
     display_success "Configuring: ${CWHITE}Oh-My-ZSH"
-    if [[ $theme == 'powerlevel9k' ]]; then
-        install_powerlevel9k_theme
-        configure_powerlevel9k_theme
-    else
-        configure_fino_theme
-    fi
+    case $theme in
+        [pP][oO][wW][eE][rR][lL][eE][vV][eE][lL][9][kK])
+            install_powerlevel9k_theme
+            configure_powerlevel9k_theme
+            ;;
+        [bB][iI][rR][aA])
+            configure_bira_theme
+            ;;
+        [fF][iI][nN][oO])
+            configure_fino_theme
+            ;;
+        *)
+            display_error "Invalid Oh-My-ZSH theme was selected. Exiting script."
+            exit 1
+            ;;
+    esac
 
     # STEP 4: Configure GRC
     if $grc; then configure_grc; fi
@@ -101,64 +106,21 @@ display_help() {
     echo -e """${CORANGE}
     Terminal Customization Script
 
-    Usage:${CE}${CBLUE} customize-terminal.sh start [options]${CORANGE}
+    Usage:${CE}${CBLUE} tconfig.sh${CORANGE}
 
     This script was built to help automate the process of customizing a users
     terminal. The target configuration to run this script in is a fresh install.
     The script is safe to your existing configurations and copies them to the
     same file name and location with .bkp appended. Example: ~/.zshrc.bkp
-
-    Options:
-    Full Word        |   Single Letter |    Description${CE}
-    --theme <THEME>  |   -t <THEME>    |    Selects the Oh-My-ZSH Theme. Default is bira.
-                                            Themes are 'bira' or 'powerlevel9k'.
-    --no-vim         |                 |    Tells the installer to not add VIM configurations.
-    --no-font        |                 |    Tells the installer to not install Awesome Terminal Fonts.
-    --no-grc         |                 |    Tells the installer to not install GRC.
     ${CORANGE}
     Example:${CE}
-        ${CBLUE}tconfig.sh start --no-vim --theme=powerlevel9k${CE}
+        ${CBLUE}tconfig.sh${CE}
     """
     exit 0
 }
 ################################################################################
-handle_install_arguments() {
-    TEMP=`getopt -o t:h -l help,theme:,no-vim,no-font,no-grc -- "$@"`
-    if [[ $? != 0 ]]; then echo "Terminating." >&2 ; exit 1; fi
-    eval set -- "$TEMP"
-    while true; do
-        case "$1" in
-            -h | --help) display_help; shift ;;
-            -t | --theme) set_theme $2; shift 2 ;;
-            --no-vim) display_info "Argument Accepted: ${CWHITE}Skipping VIM Configuration."
-                    vim=false; shift ;;
-            --no-font) display_info "Argument Accepted: ${CWHITE}Skipping Font Configuration."
-                font=false; shift ;;
-            --no-grc) display_info "Argument Accepted: ${CWHITE}Skipping GRC Configuration."
-                grc=false; shift ;;
-            -- ) shift; break ;;
-            *) break ;;
-        esac
-    done
-}
-################################################################################
-set_theme() {
-    if [[ $(echo $1 |grep -oE '^[bB][iI][rR][aA]$') ]]; then
-        display_info "Argument Accepted: ZSH: Bira Theme Enabled."
-        theme='bira'
-    elif [[ "$(echo $1 |grep -oE '^[fF][iI][nN][oO]$')" ]]; then
-        display_info "Argument Accepted: ZSH: Fino Theme Enabled."
-        theme='fino'
-    elif [[ "$(echo $1 |grep -oE '^[pP][oO][wW][eE][rR][lL][eE][vV][eE][lL][9][kK]$')" ]]; then
-        display_info "Argument Accepted: ZSH: Powerlevel9K Theme Enabled."
-        theme='powerlevel9k'
-    else
-        display_error "Invalid theme. Defaulting to fino."
-        theme='fino'
-    fi
-}
-################################################################################
 display_info() {
+    echo
     display_bar $CBLUE
     echo -e "${CBLUE}[*]${CE} ${1}${CE}"
     display_bar $CBLUE
@@ -167,29 +129,84 @@ display_message() {
     echo -e "${CGREEN}[+]${CE} ${1}${CE}"
 }
 display_success() {
+    echo
     display_bar $CGREEN
     echo -e "${CGREEN}[+]${CE} ${1}${CE}"
     display_bar $CGREEN
 }
 display_warning() {
+    echo
     display_bar $CYELLOW
     echo -e "${CYELLOW}[!]${CE} ${1}${CE}"
     display_bar $CYELLOW
 }
 display_error() {
+    echo
     display_bar $CRED
     echo -e "${CRED}[-]${CE} ${1}${CE}"
     display_bar $CRED
 }
 display_bar() {
     echo -e "${1}====================================================================================================${CE}"
-    #echo -e "${1}----------------------------------------------------------------------------------------------------${CE}"
-    #echo -e "${1}####################################################################################################${CE}"
 }
 ################################################################################
-install_apt_package() {
-        display_success "Installing Package: ${CWHITE}$1"
-        sudo apt-get install -y $1
+prompt_confirmation() {
+    echo
+    echo -en "${CYELLOW}[!]${CE} $1  ${CYELLOW}${2}${CE}  "
+    read -r response
+    case $response in
+        [yY]|[yY][eE][sS])
+            false
+            ;;
+        *)
+            exit 1
+            ;;
+    esac
+}
+################################################################################
+display_script_confirmation() {
+    display_bar $CYELLOW
+    echo -e "${CYELLOW}[!]${CE} This script will install software to your operating system and change configurations.${CE}"
+    echo
+    echo -e "    For a full list of software and configuration changes see ${CBLUE}https://github.com/mikeabreu/tconfig${CE}"
+    echo
+    echo -e "    ${CRED}CTRL+C to exit the script during execution.${CE}"
+    display_bar $CYELLOW
+    prompt_confirmation "Are you sure that you wish to continue?" "[y/N]"
+}
+################################################################################
+display_theme_selection() {
+    invalid_theme_selected=true
+    echo
+    display_bar $CYELLOW
+    echo -e "${CYELLOW}[!]${CE} Please select an Oh-My-ZSH theme from the list below.${CE}"
+    echo
+    echo -e "    ${CWHITE}powerlevel9k${CE}"
+    echo -e "    ${CWHITE}bira${CE}"
+    echo -e "    ${CWHITE}fino${CE}"
+    display_bar $CYELLOW
+    while $invalid_theme_selected; do
+        echo
+        echo -en "${CYELLOW}[!]${CE} Enter the Oh-My-ZSH theme you wish to use: ${CE}"
+        read -r response
+        case $response in
+            [pP][oO][wW][eE][rR][lL][eE][vV][eE][lL][9][kK])
+                set_theme "powerlevel9k"
+                invalid_theme_selected=false
+                ;;
+            [bB][iI][rR][aA])
+                set_theme "bira"
+                invalid_theme_selected=false
+                ;;
+            [fF][iI][nN][oO])
+                set_theme "fino"
+                invalid_theme_selected=false
+                ;;
+            *)
+                display_error "Invalid Oh-My-ZSH theme was selected. Try again."
+                ;;
+        esac
+    done
 }
 ################################################################################
 create_directory() {
@@ -214,6 +231,42 @@ safe_backup() {
     fi
 }
 ################################################################################
+configure_powerlevel9k_theme() {
+    safe_copy "${CWD}/configs/zsh/.zshrc_powerlevel9k" "${HOME}/.zshrc"
+}
+configure_bira_theme() {
+    safe_copy "${CWD}/configs/zsh/.zshrc_bira" "${HOME}/.zshrc"
+}
+configure_fino_theme() {
+    safe_copy "${CWD}/configs/zsh/.zshrc_fino" "${HOME}/.zshrc"
+}
+################################################################################
+configure_grc() {
+    display_success "Configuring GRC"
+    safe_copy "${CWD}/configs/grc/conf.nmap" "${HOME}/.grc/conf.nmap"
+    safe_copy "${CWD}/configs/grc/grc.conf" "/etc/grc.conf"
+    safe_copy "${CWD}/configs/grc/grc.zsh" "/etc/grc.zsh"
+    safe_copy "${CWD}/configs/grc/conf.ls" "/usr/share/grc/conf.ls"
+}
+################################################################################
+configure_vim() {
+    display_success "Configuring VIM"
+    safe_copy "${CWD}/configs/vim/.vimrc" "${HOME}/.vimrc"
+    safe_copy "${CWD}/configs/vim/monokai.vim" "${HOME}/.vim/colors/monokai.vim"
+    # Install All Plugins
+    vim +PluginInstall +qall && cp "${HOME}/.vim/bundle/vim-monokai/colors/monokai.vim ${HOME}/.vim/colors/monokai.vim"
+}
+################################################################################
+configure_terminator() {
+    display_success "Configuring Terminator"
+    safe_copy "${CWD}/configs/terminator/config" "${HOME}/.config/terminator/config"
+}
+################################################################################
+install_apt_package() {
+        display_success "Installing Package: ${CWHITE}$1"
+        sudo apt-get install -y $1
+}
+################################################################################
 install_oh_my_zsh() {
     if [[ -e "${HOME}/.oh-my-zsh/oh-my-zsh.sh" ]]; then
         display_warning "Skipping Installation Oh-My-ZSH (Already Installed)"
@@ -234,22 +287,16 @@ install_powerlevel9k_theme() {
     fi
 }
 ################################################################################
-configure_powerlevel9k_theme() {
-    safe_copy "${CWD}/configs/zsh/.zshrc_powerlevel9k" "${HOME}/.zshrc"
-}
-configure_bira_theme() {
-    safe_copy "${CWD}/configs/zsh/.zshrc_bira" "${HOME}/.zshrc"
-}
-configure_fino_theme() {
-    safe_copy "${CWD}/configs/zsh/.zshrc_fino" "${HOME}/.zshrc"
-}
-################################################################################
-configure_grc() {
-    display_success "Configuring GRC"
-    safe_copy "${CWD}/configs/grc/conf.nmap" "${HOME}/.grc/conf.nmap"
-    safe_copy "${CWD}/configs/grc/grc.conf" "/etc/grc.conf"
-    safe_copy "${CWD}/configs/grc/grc.zsh" "/etc/grc.zsh"
-    safe_copy "${CWD}/configs/grc/conf.ls" "/usr/share/grc/conf.ls"
+install_awesome_fonts() {
+    if [ -e "${HOME}/.fonts/SourceCodePro+Powerline+Awesome+Regular.ttf" ]; then
+        display_warning "Skipping Installation Awesome Terminal Fonts (Already Installed)"
+    else
+        display_success "Installing: ${CWHITE}Awesome Terminal Fonts"
+        safe_backup "${HOME}/.fonts"
+        mkdir -p "${HOME}/.fonts"               # Create the fonts dir required
+        cd "${CWD}/awesome-terminal-fonts" && "./sourcecodepro.sh" 1>&2 /dev/null
+        cd "${CWD}"
+    fi
 }
 ################################################################################
 install_vundle() {
@@ -261,29 +308,24 @@ install_vundle() {
     fi
 }
 ################################################################################
-configure_vim() {
-    display_success "Configuring VIM"
-    safe_copy "${CWD}/configs/vim/.vimrc" "${HOME}/.vimrc"
-    safe_copy "${CWD}/configs/vim/monokai.vim" "${HOME}/.vim/colors/monokai.vim"
-    # Install All Plugins
-    vim +PluginInstall +qall && cp "${HOME}/.vim/bundle/vim-monokai/colors/monokai.vim ${HOME}/.vim/colors/monokai.vim"
-}
-################################################################################
-configure_terminator() {
-    display_success "Configuring Terminator"
-    safe_copy "${CWD}/configs/terminator/config" "${HOME}/.config/terminator/config"
-}
-################################################################################
-install_awesome_fonts() {
-    if [ -e "${HOME}/.fonts/SourceCodePro+Powerline+Awesome+Regular.ttf" ]; then
-        display_warning "Skipping Installation Awesome Terminal Fonts (Already Installed)"
-    else
-        display_success "Installing: ${CWHITE}Awesome Terminal Fonts"
-        safe_backup "${HOME}/.fonts"
-        mkdir -p "${HOME}/.fonts"               # Create the fonts dir required
-        cd "${CWD}/awesome-terminal-fonts" && "./sourcecodepro.sh" 1>&2 /dev/null
-        cd "${CWD}"
-    fi
+set_theme() {
+    case $1 in
+        [pP][oO][wW][eE][rR][lL][eE][vV][eE][lL][9][kK])
+            display_info "Oh-My-ZSH Theme Accepted: ${CWHITE}Powerlevel9K"
+            theme='powerlevel9k'
+            ;;
+        [bB][iI][rR][aA])
+            display_info "Oh-My-ZSH Theme Accepted: ${CWHITE}Bira"
+            theme='bira'
+            ;;
+        [fF][iI][nN][oO])
+            display_info "Oh-My-ZSH Theme Accepted: ${CWHITE}Fino"
+            theme='fino'
+            ;;
+        *)
+            false
+            ;;
+    esac
 }
 ################################################################################
 add_terminal_colors() {
