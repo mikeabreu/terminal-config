@@ -6,14 +6,7 @@
 #   Usage: tconfig.sh command [options]
 #
 #   Example:
-#       # Install terminal configurations
-#       ./tconfig.sh install [-s][--silent] [--no-grc] [--theme=THEME_NAME]
-#
-#       # Update terminal configuration dependencies
-#       ./tconfig.sh update
-#
-#       # Change Oh-My-ZSH Themes
-#       ./tconfig.sh theme [THEME_NAME] [-l][--list]
+#       ./tconfig.sh   
 #
 #   This script was built to help automate the process of customizing a users
 #   terminal. The target configuration to run this script in is a fresh install.
