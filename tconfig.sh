@@ -42,7 +42,7 @@ main() {
     fi
 
     # STEP 1: Install ZSH, GRC, VIM and TERMINATOR
-    apt-get update
+    sudo apt-get update
     install_apt_package "terminator"
     install_apt_package "zsh"
     install_apt_package "bc"
@@ -205,7 +205,7 @@ display_theme_selection() {
 create_directory() {
     if [[ ! -e $1 ]]; then
         display_message "Creating Directory:${CWHITE} $1"
-        mkdir -p $1
+        sudo mkdir -p $1
     fi
 }
 ################################################################################
@@ -214,13 +214,13 @@ safe_copy() {
         safe_backup $2
     fi
     display_message "File Copy:${CBLUE} ${1} ${CE}copied to${CGREEN} ${2}"
-    cp "${1}" "${2}"
+    sudo cp "${1}" "${2}"
 }
 ################################################################################
 safe_backup() {
     if [[ -e $1 ]]; then
         display_message "File Backup:${CBLUE} ${1} ${CE}copied to${CGREEN} ${1}.bkp"
-        cp "${1}" "${1}.bkp"
+        sudo cp "${1}" "${1}.bkp"
     fi
 }
 ################################################################################
