@@ -247,7 +247,7 @@ configure_vim() {
     safe_copy "${CWD}/configs/vim/.vimrc" "${HOME}/.vimrc"
     safe_copy "${CWD}/configs/vim/monokai.vim" "${HOME}/.vim/colors/monokai.vim"
     # Install All Plugins
-    vim +PluginInstall +qall && cp "${HOME}/.vim/bundle/vim-monokai/colors/monokai.vim ${HOME}/.vim/colors/monokai.vim"
+    sudo vim +PluginInstall +qall && cp "${HOME}/.vim/bundle/vim-monokai/colors/monokai.vim ${HOME}/.vim/colors/monokai.vim"
 }
 ################################################################################
 configure_terminator() {
