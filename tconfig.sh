@@ -6,7 +6,7 @@
 #   Usage: tconfig.sh command [options]
 #
 #   Example:
-#       ./tconfig.sh   
+#       ./tconfig.sh
 #
 #   This script was built to help automate the process of customizing a users
 #   terminal. The target configuration to run this script in is a fresh install.
@@ -34,7 +34,8 @@ main() {
     git submodule update --init
 
     # remove 'env zsh' line in install.sh script for oh-my-zsh
-    sed -i 's/env zsh//g' oh-my-zsh/tools/install.sh
+    sed -i 's/env zsh/#env zsh/g' oh-my-zsh/tools/install.sh || echo "Failed removing env zsh"
+    sed -i 's/chsh -s/#chsh -s/g' oh-my-zsh/tools/install.sh || echo "Failed removing chsh"
     sed -i 's/sudo//g' awesome-terminal-fonts/sourcecodepro.sh
 
     # Create all required file locations
@@ -55,7 +56,7 @@ main() {
     if $font; then install_apt_package "python-fontforge"; fi
 
     # STEP 2: Install Oh-My-ZSH
-    sudo install_oh_my_zsh
+    install_oh_my_zsh
 
     # STEP 3: Configure Theme for ZSH
     display_success "Configuring: ${CWHITE}Oh-My-ZSH"
@@ -273,6 +274,7 @@ install_oh_my_zsh() {
         display_success "Installing: ${CWHITE}Oh-My-ZSH"
         # sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
         ${CWD}/oh-my-zsh/tools/install.sh
+        display_messsage "Changing default shell to ZSH"
         chsh -s /usr/bin/zsh
     fi
 }
