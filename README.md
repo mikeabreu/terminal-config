@@ -10,4 +10,7 @@ This script was created to quickly configure Kali Linux or Debian terminals to m
 - GRC
 
 ## Screenshot
-![terminal preview](http://imgur.com/a/Werp6)
+####Powerlevel9k
+<p align="center">
+  <img src="https://i.imgur.com/SzVYmG7.png" alt="Powerlevel9k Terminal Screenshot">
+</p>
