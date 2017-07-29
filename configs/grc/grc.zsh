@@ -15,6 +15,7 @@ if [[ "$TERM" != dumb ]] && (( $+commands[grc] )) ; then
     dig \
     gcc \
     gmake \
+    ip \
     ifconfig \
     last \
     ldap \
