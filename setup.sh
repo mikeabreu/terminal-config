@@ -20,6 +20,7 @@ main() {
     CWD=$(dirname $0)
     font=true
     vim=true
+    sublime=true
 
     # Display information
     display_theme_selection
@@ -42,6 +43,7 @@ main() {
     reset_home_dir_permissions
 
     # STEP 1: Install ZSH, GRC, VIM and TERMINATOR
+    add_sublime_gpg
     sudo apt-get update
     install_apt_package "terminator"
     install_apt_package "zsh"
@@ -87,7 +89,10 @@ main() {
     # STEP 8: Install Awesome Terminal Fonts
     if $font; then install_awesome_fonts; fi
 
-    # STEP 9: Tell user to restart the terminal
+    # STEP 9: Install Sublime Text Editor
+    if $sublime; then install_apt_package "sublime-text"; fi
+
+    # Tell user to restart the terminal
     display_warning "Please open terminator."
     display_success "Terminal Configuration Finished"
     reset_home_dir_permissions
@@ -252,6 +257,12 @@ configure_vim() {
 configure_terminator() {
     display_success "Configuring Terminator"
     safe_copy "${CWD}/configs/terminator/config" "${HOME}/.config/terminator/config"
+}
+################################################################################
+add_sublime_gpg () { 
+    display_message "Adding Sublime GPG key"
+    wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
+    echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
 }
 ################################################################################
 install_apt_package() {
