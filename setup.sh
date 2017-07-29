@@ -18,9 +18,6 @@ main() {
     # Set variables
     TUSR=$(whoami)
     CWD=$(dirname $0)
-    font=true
-    vim=true
-    sublime=true
 
     # Display information
     display_theme_selection
@@ -36,21 +33,20 @@ main() {
     # Create all required file locations
     create_directory "${HOME}/.grc"
     create_directory "${HOME}/.config/terminator/"
-    if $vim; then
-        create_directory "${HOME}/.vim/bundle"
-        create_directory "${HOME}/.vim/colors"
-    fi
+    create_directory "${HOME}/.vim/bundle"
+    create_directory "${HOME}/.vim/colors"
     reset_home_dir_permissions
 
-    # STEP 1: Install ZSH, GRC, VIM and TERMINATOR
+    # STEP 1: Install Packages with Aptitude
     add_sublime_gpg
     sudo apt-get update
     install_apt_package "terminator"
     install_apt_package "zsh"
     install_apt_package "bc"
-    if $vim; then install_apt_package "vim"; fi
-    if $vim; then install_apt_package "grc"; fi
-    if $font; then install_apt_package "python-fontforge"; fi
+    install_apt_package "vim"
+    install_apt_package "grc"
+    install_apt_package "python-fontforge"
+    install_apt_package "sublime-text"
 
     # STEP 2: Install Oh-My-ZSH
     install_oh_my_zsh
@@ -75,22 +71,19 @@ main() {
     esac
 
     # STEP 4: Configure GRC
-    if $grc; then configure_grc; fi
+    configure_grc
 
     # STEP 5: Install Vundle
-    if $vim; then install_vundle; fi
+    install_vundle
 
     # STEP 6: Configure VIM
-    if $vim; then configure_vim; fi
+    configure_vim
 
     # STEP 7: Configure Terminator
     configure_terminator
 
     # STEP 8: Install Awesome Terminal Fonts
-    if $font; then install_awesome_fonts; fi
-
-    # STEP 9: Install Sublime Text Editor
-    if $sublime; then install_apt_package "sublime-text"; fi
+    install_awesome_fonts
 
     # Tell user to restart the terminal
     display_warning "Please open terminator."
