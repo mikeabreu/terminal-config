@@ -5,7 +5,7 @@ export TERM='xterm-256color'
 export WORKON_HOME=$HOME/.py-envs
 
 # Oh My ZSH Theme
-ZSH_THEME="bira"
+ZSH_THEME="INSERT_THEME"
 plugins=(git)
 source $ZSH/oh-my-zsh.sh
 

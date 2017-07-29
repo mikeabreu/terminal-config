@@ -67,10 +67,10 @@ main() {
             configure_powerlevel9k_theme
             ;;
         [bB][iI][rR][aA])
-            configure_bira_theme
+            configure_zsh_theme "bira"
             ;;
         [fF][iI][nN][oO])
-            configure_fino_theme
+            configure_zsh_theme "fino"
             ;;
         *)
             display_error "Invalid Oh-My-ZSH theme was selected. Exiting script."
@@ -234,11 +234,9 @@ safe_backup() {
 configure_powerlevel9k_theme() {
     safe_copy "${CWD}/configs/zsh/.zshrc_powerlevel9k" "${HOME}/.zshrc"
 }
-configure_bira_theme() {
-    safe_copy "${CWD}/configs/zsh/.zshrc_bira" "${HOME}/.zshrc"
-}
-configure_fino_theme() {
-    safe_copy "${CWD}/configs/zsh/.zshrc_fino" "${HOME}/.zshrc"
+configure_zsh_theme() {
+    safe_copy "${CWD}/configs/zsh/.zshrc" "${HOME}/.zshrc"
+    sed -i "s/INSERT_THEME/${1}/g" "${HOME}/.zshrc"
 }
 ################################################################################
 configure_grc() {
