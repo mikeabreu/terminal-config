@@ -1,17 +1,11 @@
 #!/bin/bash
 #
-#   File: tconfig.sh
+#   Project: Terminal Configuration
+#   File: setup.sh
 #   Author: Mike Abreu
 #
-#   Usage: tconfig.sh command [options]
-#
-#   Example:
-#       ./tconfig.sh
-#
-#   This script was built to help automate the process of customizing a users
-#   terminal. The target configuration to run this script in is a fresh install.
-#   The script is safe to your existing configurations and copies them to the
-#   same file name and location with .bkp appended. Example: ~/.zshrc.bkp
+#   This is a script that was created to quickly configure Kali/Debian Linux 
+#   terminal environments to reflect my own configuration.
 #
 ################################################################################
 main() {
