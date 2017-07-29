@@ -274,7 +274,7 @@ install_oh_my_zsh() {
         display_success "Installing: ${CWHITE}Oh-My-ZSH"
         # sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
         ${CWD}/oh-my-zsh/tools/install.sh
-        display_messsage "Changing default shell to ZSH"
+        display_message "Changing default shell to ZSH"
         chsh -s /usr/bin/zsh
     fi
 }
