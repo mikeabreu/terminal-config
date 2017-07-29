@@ -45,6 +45,7 @@ main() {
         create_directory "${HOME}/.vim/bundle"
         create_directory "${HOME}/.vim/colors"
     fi
+    reset_home_dir_permissions
 
     # STEP 1: Install ZSH, GRC, VIM and TERMINATOR
     sudo apt-get update
@@ -81,7 +82,6 @@ main() {
     if $grc; then configure_grc; fi
 
     # STEP 5: Install Vundle
-    reset_home_dir_permissions
     if $vim; then install_vundle; fi
 
     # STEP 6: Configure VIM
@@ -305,7 +305,7 @@ install_vundle() {
         display_warning "Skipping Installation Vundle (Already Installed)"
     else
         display_success "Installing VIM Package: ${CWHITE}Vundle"
-        git clone "https://github.com/VundleVim/Vundle.vim.git" "~/.vim/bundle/Vundle.vim"
+        git clone "https://github.com/VundleVim/Vundle.vim.git" ~/.vim/bundle/Vundle.vim
     fi
 }
 ################################################################################
