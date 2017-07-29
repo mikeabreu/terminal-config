@@ -305,7 +305,6 @@ install_vundle() {
         display_warning "Skipping Installation Vundle (Already Installed)"
     else
         display_success "Installing VIM Package: ${CWHITE}Vundle"
-        mkdir -p "${HOME}/.vim/bundle/"
         git clone "https://github.com/VundleVim/Vundle.vim.git" "~/.vim/bundle/Vundle.vim"
     fi
 }
