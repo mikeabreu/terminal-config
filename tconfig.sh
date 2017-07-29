@@ -306,7 +306,7 @@ install_vundle() {
     else
         display_success "Installing VIM Package: ${CWHITE}Vundle"
         mkdir -p "${HOME}/.vim/bundle/"
-        cp -r "${CWD}/Vundle.vim" "${HOME}/.vim/bundle/"
+        git clone "https://github.com/VundleVim/Vundle.vim.git" "~/.vim/bundle/Vundle.vim"
     fi
 }
 ################################################################################
