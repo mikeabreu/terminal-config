@@ -17,6 +17,7 @@ This script was created to quickly configure Kali Linux or Debian terminals to m
 - GRC
 - Oh-My-ZSH
 - Vundle
+- Sublime Text Editor 3
 
 ## Installation
 In order to run this script and begin configuring your system to mimic my configuration follow these steps:

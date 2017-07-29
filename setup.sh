@@ -4,7 +4,7 @@
 #   File: setup.sh
 #   Author: Mike Abreu
 #
-#   This is a script that was created to quickly configure Kali/Debian Linux 
+#   This is a script that was created to quickly configure Kali/Debian Linux
 #   terminal environments to reflect my own configuration.
 #
 ################################################################################
@@ -84,6 +84,9 @@ main() {
 
     # STEP 8: Install Awesome Terminal Fonts
     install_awesome_fonts
+
+    # STEP 9: Configure Sublime
+    configure_sublime_text
 
     # Tell user to restart the terminal
     display_warning "Please open terminator."
@@ -252,7 +255,12 @@ configure_terminator() {
     safe_copy "${CWD}/configs/terminator/config" "${HOME}/.config/terminator/config"
 }
 ################################################################################
-add_sublime_gpg () { 
+configure_sublime_text() {
+    display_success "Configuring Sublime Text"
+    cp -r "${CWD}/configs/sublime-text-3" ~/.config/sublime-text-3
+}
+################################################################################
+add_sublime_gpg () {
     display_message "Adding Sublime GPG key"
     wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
     echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
