@@ -46,7 +46,7 @@ set t_Co=256 " vim-monokai now only support 256 colours in terminal.
 let NERDTreeIgnore=['\.pyc$', '\~$']
 
 " let Vundle manage Vundle
-Plugin 'VundleVim/Vundle.vim'                  " required
+Plugin 'gmarik/Vundle.vim'                  " required
 
 " Add all your plugins here
 Plugin 'tmhedberg/SimpylFold'
