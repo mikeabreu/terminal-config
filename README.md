@@ -32,7 +32,9 @@ This script requires root privilege and will attempt to sudo where necessary.
 </p>
 
 ### Bira
-
+<p align="center">
+   <img src="https://i.imgur.com/Uk4vDQv.png" alt="Bira Terminal Screenshot">
+</p>
 
 ## Contributing
 Anyone is welcome to contribute by making pull requests. I'll look over them and see if it makes sense to add.
