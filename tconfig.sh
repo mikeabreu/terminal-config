@@ -15,11 +15,14 @@
 #
 ################################################################################
 main() {
+    echo "This script requires sudo privileges or to be run as root"
+    sudo whoami
     clear
     # Display confirmation
     display_script_confirmation
 
     # Set variables
+    TUSR=$(whoami)
     CWD=$(dirname $0)
     font=true
     vim=true
@@ -32,6 +35,7 @@ main() {
 
     # remove 'env zsh' line in install.sh script for oh-my-zsh
     sed -i 's/env zsh//g' oh-my-zsh/tools/install.sh
+    sed -i 's/sudo//g' awesome-terminal-fonts/sourcecodepro.sh
 
     # Create all required file locations
     create_directory "${HOME}/.grc"
@@ -51,7 +55,7 @@ main() {
     if $font; then install_apt_package "python-fontforge"; fi
 
     # STEP 2: Install Oh-My-ZSH
-    install_oh_my_zsh
+    sudo install_oh_my_zsh
 
     # STEP 3: Configure Theme for ZSH
     display_success "Configuring: ${CWHITE}Oh-My-ZSH"
@@ -76,6 +80,7 @@ main() {
     if $grc; then configure_grc; fi
 
     # STEP 5: Install Vundle
+    reset_home_dir_permissions
     if $vim; then install_vundle; fi
 
     # STEP 6: Configure VIM
@@ -90,6 +95,7 @@ main() {
     # STEP 9: Tell user to restart the terminal
     display_warning "Please open terminator."
     display_success "Terminal Configuration Finished"
+    reset_home_dir_permissions
     env zsh
 }
 ################################################################################
@@ -247,7 +253,7 @@ configure_vim() {
     safe_copy "${CWD}/configs/vim/.vimrc" "${HOME}/.vimrc"
     safe_copy "${CWD}/configs/vim/monokai.vim" "${HOME}/.vim/colors/monokai.vim"
     # Install All Plugins
-    sudo vim +PluginInstall +qall && cp "${HOME}/.vim/bundle/vim-monokai/colors/monokai.vim ${HOME}/.vim/colors/monokai.vim"
+    vim +PluginInstall +qall && cp "${HOME}/.vim/bundle/vim-monokai/colors/monokai.vim" "${HOME}/.vim/colors/monokai.vim"
 }
 ################################################################################
 configure_terminator() {
@@ -297,7 +303,8 @@ install_vundle() {
         display_warning "Skipping Installation Vundle (Already Installed)"
     else
         display_success "Installing VIM Package: ${CWHITE}Vundle"
-        git clone "https://github.com/VundleVim/Vundle.vim.git" "${HOME}/.vim/bundle/Vundle.vim"
+        mkdir -p "${HOME}/.vim/bundle/"
+        cp -r "${CWD}/Vundle.vim" "${HOME}/.vim/bundle/"
     fi
 }
 ################################################################################
@@ -319,6 +326,10 @@ set_theme() {
             false
             ;;
     esac
+}
+################################################################################
+reset_home_dir_permissions() {
+    sudo chown ${TUSR}:${TUSR} -R $HOME
 }
 ################################################################################
 add_terminal_colors() {
