@@ -1,7 +1,6 @@
 #!/bin/bash
 #
-#   Project: Terminal Configuration
-#   File: setup.sh
+#   Terminal Configuration
 #   Author: Mike Abreu
 #
 #   This is a script that was created to quickly configure Kali/Debian Linux 
