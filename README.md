@@ -7,6 +7,7 @@ This script was created to quickly configure Kali Linux or Debian terminals to m
 - Kali Linux 2017.1 x64
 - Debian 8.x x64
 - Debian 9.x x64
+- Probably works on Ubuntu but haven't test this
 
 ## Software Installed
 - ZSH
