@@ -277,17 +277,22 @@ install_apt_package() {
 }
 ################################################################################
 install_grc() {
-    if [[ -e "/etc/grc.conf" ]]; then
-        safe_backup "/etc/grc.conf"
-        # Need to remove this file so that dpkg installs cleanly
-        sudo rm -fr "/etc/grc.conf"
+    if [[ $(grc --version|head -n1) == "Generic Colouriser 1.11.1" ]]; then
+        display_warning "Skipping Installation Generic Colouriser (GRC) (Already Installed)"
+    else
+        display_success "Installing: ${CWHITE}Generic Colouriser (GRC) 1.11.1 2017 version"
+        if [[ -e "/etc/grc.conf" ]]; then
+            safe_backup "/etc/grc.conf"
+            # Need to remove this file so that dpkg installs cleanly
+            sudo rm -fr "/etc/grc.conf"
+        fi
+        if [[ -e "/etc/grc.zsh" ]]; then
+            safe_backup "/etc/grc.zsh"
+            # Need to remove this file so that dpkg installs cleanly
+            sudo rm -fr "/etc/grc.zsh"
+        fi
+        sudo dpkg -i "${CWD}/configs/grc/grc_1.11.1-1_all.deb"
     fi
-    if [[ -e "/etc/grc.zsh" ]]; then
-        safe_backup "/etc/grc.zsh"
-        # Need to remove this file so that dpkg installs cleanly
-        sudo rm -fr "/etc/grc.zsh"
-    fi
-    sudo dpkg -i "${CWD}/configs/grc/grc_1.11.1-1_all.deb"
 }
 ################################################################################
 install_oh_my_zsh() {
