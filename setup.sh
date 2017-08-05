@@ -38,6 +38,8 @@ main() {
     reset_home_dir_permissions
 
     # STEP 1: Install Packages with Aptitude
+    sudo apt-get update
+    install_apt_package "apt-transport-https"
     add_sublime_gpg
     sudo apt-get update
     install_apt_package "terminator"
