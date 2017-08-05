@@ -33,6 +33,7 @@ main() {
     # Create all required file locations
     create_directory "${HOME}/.grc"
     create_directory "${HOME}/.config/terminator/"
+    create_directory "${HOME}/.config/sublime-text-3/"
     create_directory "${HOME}/.vim/bundle"
     create_directory "${HOME}/.vim/colors"
     reset_home_dir_permissions
