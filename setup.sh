@@ -47,9 +47,11 @@ main() {
     install_apt_package "zsh"
     install_apt_package "bc"
     install_apt_package "vim"
-    install_apt_package "grc"
     install_apt_package "python-fontforge"
     install_apt_package "sublime-text"
+
+    # Need to install version 1.11.1 from Kali Sources. Debian has latest at 1.9 which is old.
+    install_grc
 
     # STEP 2: Install Oh-My-ZSH
     install_oh_my_zsh
@@ -272,6 +274,20 @@ add_sublime_gpg () {
 install_apt_package() {
         display_success "Installing Package: ${CWHITE}$1"
         sudo apt-get install -y $1
+}
+################################################################################
+install_grc() {
+    if [[ -e "/etc/grc.conf" ]]; then
+        safe_backup "/etc/grc.conf"
+        # Need to remove this file so that dpkg installs cleanly
+        sudo rm -fr "/etc/grc.conf"
+    fi
+    if [[ -e "/etc/grc.zsh" ]]; then
+        safe_backup "/etc/grc.zsh"
+        # Need to remove this file so that dpkg installs cleanly
+        sudo rm -fr "/etc/grc.zsh"
+    fi
+    sudo dpkg -i "${CWD}/configs/grc/grc_1.11.1-1_all.deb"
 }
 ################################################################################
 install_oh_my_zsh() {
