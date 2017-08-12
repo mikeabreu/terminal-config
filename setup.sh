@@ -262,7 +262,7 @@ configure_terminator() {
 ################################################################################
 configure_sublime_text() {
     display_success "Configuring Sublime Text"
-    cp -r "${CWD}/configs/sublime-text-3" ~/.config/sublime-text-3
+    cp -r "${CWD}/configs/sublime-text-3" ~/.config/
 }
 ################################################################################
 add_sublime_gpg () {
