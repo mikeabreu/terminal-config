@@ -216,8 +216,8 @@ install_spaceship_theme() {
         display_warning "Skipping Installation: Spaceship (Already Installed)"
     else
         display_success "[+] Installing ZSH Theme:${CWHITE} Spaceship Prompt"
-        copy_recursive "${CWD}/spaceship-prompt" "${ZSH_CUSTOM}/themes/spaceship-prompt"
-        ln -s "${ZSH_CUSTOM}/themes/spaceship-prompt/spaceship.zsh-theme" "${ZSH_CUSTOM}/themes/spaceship.zsh-theme"
+        copy_recursive "${CWD}/spaceship-prompt" "${HOME}/.oh-my-zsh/custom/themes/spaceship-prompt"
+        ln -s "${HOME}/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme" "${HOME}/.oh-my-zsh/themes/spaceship.zsh-theme"
     fi
 }
 ################################################################################
