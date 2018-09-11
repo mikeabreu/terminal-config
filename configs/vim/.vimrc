@@ -41,7 +41,6 @@ let python_highlight_all=1
 syntax on
 colorscheme monokai
 set t_Co=256 " vim-monokai now only support 256 colours in terminal.
-set term=screen-256-color
 
 " Nerdtree Ignore .pyc files
 let NERDTreeIgnore=['\.pyc$', '\~$']

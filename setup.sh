@@ -175,10 +175,9 @@ configure_zshrc() {
 ################################################################################
 configure_grc() {
     display_success "Configuring GRC"
-    safe_copy "${CWD}/configs/grc/conf.nmap" "${HOME}/.grc/conf.nmap"
+    copy_recursive "${CWD}/configs/grc/conf/*" "/usr/share/grc/"
     safe_copy "${CWD}/configs/grc/grc.conf" "/etc/grc.conf"
     safe_copy "${CWD}/configs/grc/grc.zsh" "/etc/grc.zsh"
-    safe_copy "${CWD}/configs/grc/conf.ls" "/usr/share/grc/conf.ls"
 }
 ################################################################################
 configure_vim() {
