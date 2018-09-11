@@ -1,7 +1,0 @@
-spool /root/.msf4/logs/console.log
-set PROMPT %cyaLHOST{%grn%L%cya} Sessions{%yel%S%cya} Jobs{%yel%J%cya}%clr
-load alias
-alias psexec use exploit/windows/smb/psexec
-alias handler use exploit/multi/handler
-
-load sounds

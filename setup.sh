@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-#   Terminal Configuration
+#   System Configuration
 #   Author: Mike Abreu
 #
-#   This is a script that was created to quickly configure Kali/Debian Linux 
+#   This is a script that was created to quickly configure Kali/Debian Linux
 #   terminal environments to reflect my own configuration.
 #
 ################################################################################
@@ -11,84 +11,62 @@ main() {
     echo "This script requires sudo privileges or to be run as root"
     sudo whoami
     clear
+    # Display version of sysconfig
+    display_info "This is the headless server configuration."
     # Display confirmation
     display_script_confirmation
 
     # Set variables
     TUSR=$(whoami)
     CWD=$(dirname $0)
-    font=true
-    vim=true
-
-    # Display information
-    display_theme_selection
 
     display_success "Updating git submodules"
     git submodule update --init
 
     # remove 'env zsh' line in install.sh script for oh-my-zsh
     sed -i 's/env zsh/#env zsh/g' oh-my-zsh/tools/install.sh || echo "Failed removing env zsh"
+    # remove 'chsh' line in install script
     sed -i 's/chsh -s/#chsh -s/g' oh-my-zsh/tools/install.sh || echo "Failed removing chsh"
-    sed -i 's/sudo//g' awesome-terminal-fonts/sourcecodepro.sh
 
     # Create all required file locations
+    create_directory "${HOME}/bin"
     create_directory "${HOME}/.grc"
     create_directory "${HOME}/.config/terminator/"
-    if $vim; then
-        create_directory "${HOME}/.vim/bundle"
-        create_directory "${HOME}/.vim/colors"
-    fi
+    create_directory "${HOME}/.vim/bundle"
+    create_directory "${HOME}/.vim/colors"
     reset_home_dir_permissions
 
     # STEP 1: Install ZSH, GRC, VIM and TERMINATOR
     sudo apt-get update
-    install_apt_package "terminator"
     install_apt_package "zsh"
-    install_apt_package "bc"
-    if $vim; then install_apt_package "vim"; fi
-    if $vim; then install_apt_package "grc"; fi
-    if $font; then install_apt_package "python-fontforge"; fi
+    install_apt_package "vim"
+    install_apt_package "grc"
+    install_apt_package "fonts-powerline"
+    install_apt_package "git"
+    install_apt_package "htop"
+    install_apt_package "axel"
+    install_apt_package "curl"
+    install_apt_package "wget"
+    install_apt_package "ipsets"
+    install_apt_package "fail2ban"
 
     # STEP 2: Install Oh-My-ZSH
     install_oh_my_zsh
 
     # STEP 3: Configure Theme for ZSH
-    display_success "Configuring: ${CWHITE}Oh-My-ZSH"
-    case $theme in
-        [pP][oO][wW][eE][rR][lL][eE][vV][eE][lL][9][kK])
-            install_powerlevel9k_theme
-            configure_powerlevel9k_theme
-            ;;
-        [bB][iI][rR][aA])
-            configure_zsh_theme "bira"
-            ;;
-        [fF][iI][nN][oO])
-            configure_zsh_theme "fino"
-            ;;
-        *)
-            display_error "Invalid Oh-My-ZSH theme was selected. Exiting script."
-            exit 1
-            ;;
-    esac
+    display_success "Configuring Spacheship: ${CWHITE}Oh-My-ZSH"
+    install_spaceship_theme
 
-    # STEP 4: Configure GRC
-    if $grc; then configure_grc; fi
+    configure_zshrc
+    configure_grc
 
-    # STEP 5: Install Vundle
-    if $vim; then install_vundle; fi
+    # STEP 6: Install Vim/Vundle
+    install_vundle
+    configure_vim
 
-    # STEP 6: Configure VIM
-    if $vim; then configure_vim; fi
+    install_cheatsheet
 
-    # STEP 7: Configure Terminator
-    configure_terminator
-
-    # STEP 8: Install Awesome Terminal Fonts
-    if $font; then install_awesome_fonts; fi
-
-    # STEP 9: Tell user to restart the terminal
-    display_warning "Please open terminator."
-    display_success "Terminal Configuration Finished"
+    display_success "System Configuration Finished"
     reset_home_dir_permissions
     env zsh
 }
@@ -168,44 +146,10 @@ display_script_confirmation() {
     prompt_confirmation "Are you sure that you wish to continue?" "[y/N]"
 }
 ################################################################################
-display_theme_selection() {
-    invalid_theme_selected=true
-    echo
-    display_bar $CYELLOW
-    echo -e "${CYELLOW}[!]${CE} Please select an Oh-My-ZSH theme from the list below.${CE}"
-    echo
-    echo -e "    ${CWHITE}powerlevel9k${CE}"
-    echo -e "    ${CWHITE}bira${CE}"
-    echo -e "    ${CWHITE}fino${CE}"
-    display_bar $CYELLOW
-    while $invalid_theme_selected; do
-        echo
-        echo -en "${CYELLOW}[!]${CE} Enter the Oh-My-ZSH theme you wish to use: ${CE}"
-        read -r response
-        case $response in
-            [pP][oO][wW][eE][rR][lL][eE][vV][eE][lL][9][kK])
-                set_theme "powerlevel9k"
-                invalid_theme_selected=false
-                ;;
-            [bB][iI][rR][aA])
-                set_theme "bira"
-                invalid_theme_selected=false
-                ;;
-            [fF][iI][nN][oO])
-                set_theme "fino"
-                invalid_theme_selected=false
-                ;;
-            *)
-                display_error "Invalid Oh-My-ZSH theme was selected. Try again."
-                ;;
-        esac
-    done
-}
-################################################################################
 create_directory() {
     if [[ ! -e $1 ]]; then
         display_message "Creating Directory:${CWHITE} $1"
-        sudo mkdir -p $1
+        sudo mkdir -vp $1
     fi
 }
 ################################################################################
@@ -213,23 +157,20 @@ safe_copy() {
     if [[ -e $2 ]]; then
         safe_backup $2
     fi
-    display_message "File Copy:${CBLUE} ${1} ${CE}copied to${CGREEN} ${2}"
-    sudo cp "${1}" "${2}"
+    sudo cp -av "${1}" "${2}"
+}
+copy_recursive() {
+    sudo cp -av -r "${1}" "${2}"
 }
 ################################################################################
 safe_backup() {
     if [[ -e $1 ]]; then
-        display_message "File Backup:${CBLUE} ${1} ${CE}copied to${CGREEN} ${1}.bkp"
-        sudo cp "${1}" "${1}.bkp"
+        sudo cp -av "${1}" "${1}.bkp"
     fi
 }
 ################################################################################
-configure_powerlevel9k_theme() {
-    safe_copy "${CWD}/configs/zsh/.zshrc_powerlevel9k" "${HOME}/.zshrc"
-}
-configure_zsh_theme() {
+configure_zshrc() {
     safe_copy "${CWD}/configs/zsh/.zshrc" "${HOME}/.zshrc"
-    sed -i "s/INSERT_THEME/${1}/g" "${HOME}/.zshrc"
 }
 ################################################################################
 configure_grc() {
@@ -248,9 +189,9 @@ configure_vim() {
     vim +PluginInstall +qall && cp "${HOME}/.vim/bundle/vim-monokai/colors/monokai.vim" "${HOME}/.vim/colors/monokai.vim"
 }
 ################################################################################
-configure_terminator() {
-    display_success "Configuring Terminator"
-    safe_copy "${CWD}/configs/terminator/config" "${HOME}/.config/terminator/config"
+install_cheatsheet() {
+    curl https://cht.sh/:cht.sh > "${HOME}/bin/cht.sh"
+    sudo chmod +x "${HOME}/bin/cht.sh"
 }
 ################################################################################
 install_apt_package() {
@@ -270,24 +211,13 @@ install_oh_my_zsh() {
     fi
 }
 ################################################################################
-install_powerlevel9k_theme() {
-    if [[ -e "${HOME}/.oh-my-zsh/custom/themes/powerlevel9k" ]]; then
-        display_warning "Skipping Installation: Powerlevel9k (Already Installed)"
+install_spaceship_theme() {
+    if [[ -e "${HOME}/.oh-my-zsh/custom/themes/spaceship-prompt" ]]; then
+        display_warning "Skipping Installation: Spaceship (Already Installed)"
     else
-        display_success "[+] Installing ZSH Theme:${CWHITE} Powerlevel9k"
-        git clone "https://github.com/bhilburn/powerlevel9k.git" "${HOME}/.oh-my-zsh/custom/themes/powerlevel9k"
-    fi
-}
-################################################################################
-install_awesome_fonts() {
-    if [ -e "${HOME}/.fonts/SourceCodePro+Powerline+Awesome+Regular.ttf" ]; then
-        display_warning "Skipping Installation Awesome Terminal Fonts (Already Installed)"
-    else
-        display_success "Installing: ${CWHITE}Awesome Terminal Fonts"
-        safe_backup "${HOME}/.fonts"
-        mkdir -p "${HOME}/.fonts"               # Create the fonts dir required
-        cd "${CWD}/awesome-terminal-fonts" && "./sourcecodepro.sh" 1>&2 /dev/null
-        cd "${CWD}"
+        display_success "[+] Installing ZSH Theme:${CWHITE} Spaceship Prompt"
+        copy_recursive "${CWD}/spaceship-prompt" "${ZSH_CUSTOM}/themes/spaceship-prompt"
+        ln -s "${ZSH_CUSTOM}/themes/spaceship-prompt/spaceship.zsh-theme" "${ZSH_CUSTOM}/themes/spaceship.zsh-theme"
     fi
 }
 ################################################################################
@@ -298,26 +228,6 @@ install_vundle() {
         display_success "Installing VIM Package: ${CWHITE}Vundle"
         git clone "https://github.com/VundleVim/Vundle.vim.git" ~/.vim/bundle/Vundle.vim
     fi
-}
-################################################################################
-set_theme() {
-    case $1 in
-        [pP][oO][wW][eE][rR][lL][eE][vV][eE][lL][9][kK])
-            display_info "Oh-My-ZSH Theme Accepted: ${CWHITE}Powerlevel9K"
-            theme='powerlevel9k'
-            ;;
-        [bB][iI][rR][aA])
-            display_info "Oh-My-ZSH Theme Accepted: ${CWHITE}Bira"
-            theme='bira'
-            ;;
-        [fF][iI][nN][oO])
-            display_info "Oh-My-ZSH Theme Accepted: ${CWHITE}Fino"
-            theme='fino'
-            ;;
-        *)
-            false
-            ;;
-    esac
 }
 ################################################################################
 reset_home_dir_permissions() {
