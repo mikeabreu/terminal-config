@@ -8,13 +8,17 @@
 #
 ################################################################################
 main() {
-    echo "This script requires sudo privileges or to be run as root"
-    sudo whoami
-    clear
-    # Display version of sysconfig
-    display_info "This is the headless server configuration."
-    # Display confirmation
-    display_script_confirmation
+    if [ $1 == '-y' ]; then
+        echo "no confirmation mode"
+    else
+        echo "This script requires sudo privileges or to be run as root"
+        sudo whoami
+        clear
+        # Display version of sysconfig
+        display_info "This is the headless server configuration."
+        # Display confirmation
+        display_script_confirmation
+    fi
 
     # Set variables
     TUSR=$(whoami)
